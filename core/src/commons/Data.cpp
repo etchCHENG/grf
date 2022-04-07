@@ -21,7 +21,10 @@
 #include <iterator>
 #include <stdexcept>
 
+#include <Eigen/Dense>
 #include "Data.h"
+#include "Arma/rcpparma"
+// [[Rcpp::depends(RcppArmadillo)]]
 
 namespace grf {
 
@@ -81,6 +84,24 @@ void Data::set_causal_survival_denominator_index(size_t index) {
 void Data::set_censor_index(size_t index) {
   this->censor_index = index;
   disallowed_split_variables.insert(index);
+}
+
+void Data::set_target_avg_weights(arma::cube x) {
+  // input data is R array [num target weights, num obs, num x columns]
+  this->target_avg_weights = x;
+  Data::set_num_target_weight_cols(x.n_rows);
+}
+
+void Data::set_target_weight_penalty(double target_weight_penalty) {
+  this->target_weight_penalty = target_weight_penalty;
+}
+
+void Data::set_target_weight_penalty_metric(std::string metric_type) {
+  this->target_weight_penalty_metric = metric_type;
+}
+
+void Data::set_num_target_weight_cols(size_t num_cols) {
+  this->num_target_weight_cols = num_cols;
 }
 
 std::vector<size_t> Data::get_all_values(std::vector<double>& all_values,

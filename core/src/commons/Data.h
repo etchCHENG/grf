@@ -24,6 +24,8 @@
 #include "Eigen/Dense"
 #include "globals.h"
 #include "optional/optional.hpp"
+#include "Arma/rcpparma"
+// [[Rcpp::depends(RcppArmadillo)]]
 
 namespace grf {
 
@@ -69,6 +71,14 @@ public:
   void set_causal_survival_denominator_index(size_t index);
 
   void set_censor_index(size_t index);
+
+  void set_target_avg_weights(arma::cube x);
+
+  void set_target_weight_penalty(double target_weight_penalty);
+
+  void set_target_weight_penalty_metric(std::string metric_type);
+
+  void set_num_target_weight_cols(size_t num_cols);
 
   /**
    * Sorts and gets the unique values in `samples` at variable `var`.
@@ -117,6 +127,14 @@ public:
   bool is_failure(size_t row) const;
 
   double get(size_t row, size_t col) const;
+
+  arma::vec get_target_weight_row(size_t x_var, size_t sample_id) const;
+
+  double get_target_weight_penalty() const;
+
+  std::string get_target_weight_penalty_metric() const;
+
+  size_t get_num_target_weight_cols() const;
 
 private:
   const double* data_ptr;
@@ -184,6 +202,23 @@ inline bool Data::is_failure(size_t row) const {
 
 inline double Data::get(size_t row, size_t col) const {
   return data_ptr[col * num_rows + row];
+}
+
+inline arma::vec Data::get_target_weight_row(size_t x_var, size_t sample_id) const {
+  // matrix in arma is column-major
+  return target_avg_weights.slice(x_var).col(sample_id);
+}
+
+inline double Data::get_target_weight_penalty() const {
+  return target_weight_penalty;
+}
+
+inline size_t Data::get_num_target_weight_cols() const {
+  return num_target_weight_cols;
+}
+
+inline std::string Data::get_target_weight_penalty_metric() const {
+  return target_weight_penalty_metric;
 }
 
 } // namespace grf
