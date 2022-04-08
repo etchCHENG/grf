@@ -1,5 +1,5 @@
 ## Use c++11
-##  -lblas -llapack if openblas if not available  -lopenblas  
+## -lblas -llapack if openblas if not available  -lopenblas  
 ## BLAS_LIBS = OpenBLAS
 SHLIB_OPENMP_CXXFLAGS = -lblas -llapack
 CXX_STD = CXX11
